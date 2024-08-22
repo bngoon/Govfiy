@@ -1,10 +1,12 @@
 import JobPosting from '../models/JobPosting.js';
 
-// Create a new job posting
+// Create a new job posting (this should automatically associate with the current user)
 export const createJobPosting = async (req, res) => {
   try {
-    const { title, description, status } = req.body;
-    const jobPosting = await JobPosting.create({ title, description, status });
+    const jobPosting = await JobPosting.create({
+      ...req.body,
+      userId: req.user.id,  // Associate the job posting with the logged-in user
+    });
     res.status(201).json(jobPosting);
   } catch (error) {
     console.error(error);
@@ -12,10 +14,10 @@ export const createJobPosting = async (req, res) => {
   }
 };
 
-// Get all job postings
+// Get all job postings (TO:DO filter this to only return the logged-in user's postings)
 export const getAllJobPostings = async (req, res) => {
   try {
-    const jobPostings = await JobPosting.findAll();
+    const jobPostings = await JobPosting.findAll({ where: { userId: req.user.id } });
     res.status(200).json(jobPostings);
   } catch (error) {
     console.error(error);
@@ -23,14 +25,15 @@ export const getAllJobPostings = async (req, res) => {
   }
 };
 
-// Get a single job posting by ID
+// Get a job posting by ID (only if it belongs to the logged-in user)
 export const getJobPostingById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const jobPosting = await JobPosting.findByPk(id);
+    const jobPosting = await JobPosting.findOne({ where: { id: req.params.id, userId: req.user.id } });
+
     if (!jobPosting) {
       return res.status(404).json({ message: 'Job Posting not found' });
     }
+
     res.status(200).json(jobPosting);
   } catch (error) {
     console.error(error);
@@ -38,36 +41,34 @@ export const getJobPostingById = async (req, res) => {
   }
 };
 
-// Update a job posting
+// Update a job posting (only if it belongs to the logged-in user)
 export const updateJobPosting = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { title, description, status } = req.body;
-    const jobPosting = await JobPosting.findByPk(id);
+    const jobPosting = await JobPosting.findOne({ where: { id: req.params.id, userId: req.user.id } });
+
     if (!jobPosting) {
       return res.status(404).json({ message: 'Job Posting not found' });
     }
-    jobPosting.title = title;
-    jobPosting.description = description;
-    jobPosting.status = status;
-    await jobPosting.save();
-    res.status(200).json(jobPosting);
+
+    const updatedJobPosting = await jobPosting.update(req.body);
+    res.status(200).json(updatedJobPosting);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
 
-// Delete a job posting
+// Delete a job posting (only if it belongs to the logged-in user)
 export const deleteJobPosting = async (req, res) => {
   try {
-    const { id } = req.params;
-    const jobPosting = await JobPosting.findByPk(id);
+    const jobPosting = await JobPosting.findOne({ where: { id: req.params.id, userId: req.user.id } });
+
     if (!jobPosting) {
       return res.status(404).json({ message: 'Job Posting not found' });
     }
+
     await jobPosting.destroy();
-    res.status(204).json({ message: 'Job Posting deleted' });
+    res.status(200).json({ message: 'Job Posting deleted' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });

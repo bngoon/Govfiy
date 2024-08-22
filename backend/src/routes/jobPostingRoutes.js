@@ -6,18 +6,18 @@ import {
   updateJobPosting,
   deleteJobPosting,
 } from '../controllers/jobPostingController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Route to create a new job posting and get all job postings
+// Apply the protect middleware to routes that require authentication
 router.route('/')
-  .post(createJobPosting)  // Create a new job posting
-  .get(getAllJobPostings); // Get all job postings
+  .post(protect, createJobPosting)  // Protected: Create a new job posting
+  .get(protect, getAllJobPostings); // Protected: Get all job postings
 
-// Route to get, update, and delete a job posting by ID
 router.route('/:id')
-  .get(getJobPostingById)    // Get job posting by ID
-  .put(updateJobPosting)     // Update job posting by ID
-  .delete(deleteJobPosting); // Delete job posting by ID
+  .get(protect, getJobPostingById)    // Protected: Get job posting by ID
+  .put(protect, updateJobPosting)     // Protected: Update job posting by ID
+  .delete(protect, deleteJobPosting); // Protected: Delete job posting by ID
 
 export default router;

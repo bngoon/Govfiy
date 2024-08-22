@@ -1,14 +1,23 @@
 import express from 'express';
 import {
-  associateCandidateWithJob,
-  getAllAssociations,
+  createCandidateJobAssociation,
+  getAllAssociations,  // Update this to use the correct function name
+  getCandidateJobAssociationById,
+  updateCandidateJobAssociation,
+  deleteCandidateJobAssociation,
 } from '../controllers/candidateJobAssociationController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Route to create a new association and get all associations
+// Apply the protect middleware to routes that require authentication
 router.route('/')
-  .post(associateCandidateWithJob)  // Associate a candidate with a job posting
-  .get(getAllAssociations);         // Get all associations
+  .post(protect, createCandidateJobAssociation)  // Protected: Create a new association
+  .get(protect, getAllAssociations);             // Protected: Get all associations
+
+router.route('/:id')
+  .get(protect, getCandidateJobAssociationById)    // Protected: Get association by ID
+  .put(protect, updateCandidateJobAssociation)     // Protected: Update association by ID
+  .delete(protect, deleteCandidateJobAssociation); // Protected: Delete association by ID
 
 export default router;
