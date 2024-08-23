@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   createCandidateJobAssociation,
-  getAllAssociations,  // Update this to use the correct function name
+  getAllAssociations, 
   getCandidateJobAssociationById,
   updateCandidateJobAssociation,
   deleteCandidateJobAssociation,
