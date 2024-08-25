@@ -59,6 +59,7 @@ export const updateJobPosting = async (req, res) => {
 };
 
 // Delete a job posting (only if it belongs to the logged-in user)
+// Delete a job posting (only if it belongs to the logged-in user)
 export const deleteJobPosting = async (req, res) => {
   try {
     const jobPosting = await JobPosting.findOne({ where: { id: req.params.id, userId: req.user.id } });
@@ -68,7 +69,7 @@ export const deleteJobPosting = async (req, res) => {
     }
 
     await jobPosting.destroy();
-    res.status(200).json({ message: 'Job Posting deleted' });
+    res.status(200).json({ message: 'Job Posting deleted successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });

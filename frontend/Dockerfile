@@ -14,7 +14,7 @@ RUN yarn install
 COPY . .
 
 # Expose the frontend port
-EXPOSE 3000
+EXPOSE 5173
 
 # Start the Vite development server
 CMD ["yarn", "dev"]

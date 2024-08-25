@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import sequelize from './config/database.js';
 
 // Import routes
@@ -11,6 +12,13 @@ import userRoutes from './routes/userRoutes.js';
 dotenv.config();
 
 const app = express();
+
+// Configure CORS
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // Adjust according to your Vite frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 app.use(express.json());
 
