@@ -1,0 +1,37 @@
+# General ignores
+node_modules
+dist
+build
+*.log
+*.tmp
+*.temp
+tmp
+.DS_Store
+Thumbs.db
+
+# Ignore environment files to keep sensitive data out of the Docker image
+.env
+
+# Frontend-specific ignores
+frontend/node_modules
+frontend/build
+frontend/dist
+
+# Backend-specific ignores
+backend/node_modules
+backend/build
+backend/dist
+
+# Ignore Docker-specific files (if not needed in the image)
+Dockerfile
+docker-compose.yml
+
+# Ignore IDE/editor configurations and project-specific files
+.vscode
+.idea
+*.swp
+
+# Ignore test coverage reports
+coverage
+frontend/coverage
+backend/coverage
