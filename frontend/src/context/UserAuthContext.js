@@ -9,7 +9,7 @@ const UserAuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      // Validate token or fetch user data here
+      // Validate token or fetch user data here if needed
     }
   }, [token]);
 
@@ -25,8 +25,11 @@ const UserAuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  // Check if the user is authenticated
+  const isAuthenticated = () => !!token;
+
   return (
-    <UserAuthContext.Provider value={{ user, token, login, logout }}>
+    <UserAuthContext.Provider value={{ user, token, login, logout, isAuthenticated }}>
       {children}
     </UserAuthContext.Provider>
   );

@@ -85,13 +85,12 @@ services:
     build: ./frontend
     container_name: govify_frontend
     ports:
-      - "5173:5173"  # Adjust port if needed
+      - "5173:5173"
     networks:
       - govify-network
     environment:
-      REACT_APP_BACKEND_URL: http://backend:5000  # Use the Docker service name
-    # Uncomment this if you need to expose the frontend to the host machine
-    # command: yarn dev --host
+      REACT_APP_BACKEND_URL: http://backend:5000
+    command: yarn dev --host
 
 networks:
   govify-network:

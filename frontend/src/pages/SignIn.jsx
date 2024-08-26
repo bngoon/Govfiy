@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+// src/pages/SignIn.jsx
+import React, { useState, useContext } from 'react';
 import { Box, Button, FormControl, FormLabel, Input, Stack, Text, useToast } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { UserAuthContext } from '../context/UserAuthContext'; // Adjust import if necessary
 
 const SignIn = ({ onRegisterToggle }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
+  const { login } = useContext(UserAuthContext); // Using context to access login function
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,10 +19,22 @@ const SignIn = ({ onRegisterToggle }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Replace with your sign-in logic
-      // Example: const response = await fetch('/login', { method: 'POST', body: JSON.stringify(formData) });
+      // Use VITE_API_URL environment variable
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
 
-      // Mock successful sign-in
+      if (!response.ok) {
+        throw new Error('Sign in failed');
+      }
+
+      const data = await response.json();
+
+      // Call login from context to store token and user data
+      login(data.token, data.user);
+
       setIsSubmitted(true);
       toast({
         title: "Sign In Successful",
@@ -33,10 +48,11 @@ const SignIn = ({ onRegisterToggle }) => {
       setTimeout(() => {
         navigate('/dashboard');
       }, 2000); // Delay navigation to show success message
+
     } catch (error) {
       toast({
         title: "Sign In Failed",
-        description: "Please try again later.",
+        description: "Please check your credentials and try again.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -48,8 +64,10 @@ const SignIn = ({ onRegisterToggle }) => {
     <Box maxW="md" mx="auto" p={4}>
       {isSubmitted ? (
         <Stack spacing={4}>
-          <Text fontSize="lg" fontWeight="bold">Sign In Successful!</Text>
-          <Text>You have been signed in successfully. You will be redirected to the dashboard shortly.</Text>
+          <Text fontSize="lg" fontWeight="bold">
+            Sign In Successful
+          </Text>
+          <Text>Your sign-in was successful. You will be redirected shortly.</Text>
         </Stack>
       ) : (
         <form onSubmit={handleSubmit}>
@@ -61,7 +79,6 @@ const SignIn = ({ onRegisterToggle }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Enter your email"
               />
             </FormControl>
             <FormControl id="password" isRequired>
@@ -71,14 +88,17 @@ const SignIn = ({ onRegisterToggle }) => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Enter your password"
               />
             </FormControl>
-            <Button colorScheme="teal" type="submit">Sign In</Button>
-            <Button colorScheme="blue" onClick={onRegisterToggle}>Need an account? Register</Button>
+            <Button colorScheme="teal" type="submit">
+              Sign In
+            </Button>
           </Stack>
         </form>
       )}
+      <Button mt={4} onClick={onRegisterToggle}>
+        Go to Register
+      </Button>
     </Box>
   );
 };
